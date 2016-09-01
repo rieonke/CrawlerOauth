@@ -1,0 +1,18 @@
+{
+    "name": "rieon/crawler-oauth",
+    "description": "an oauth login lib for a web crawler",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rieon Ke",
+            "email": "rieon@rieon.cn"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Rieon\\CrawlerOauth\\": "src/CrawlerOauth" }
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^6.2"
+    }
+}
