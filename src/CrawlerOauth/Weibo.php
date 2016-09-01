@@ -101,14 +101,19 @@ class Weibo extends BaseAuth
     }
 
     /**
-     * @return bool|string
+     * @param bool $option
+     * @return bool|\Psr\Http\Message\StreamInterface|string
      */
-    private function getQrcodeImg()
+    protected function getQrcodeImg($option = false)
     {
         $client = new Client();
         $res = $client->get($this->qrcodeUrl,['verify' => false, 'allow_redirects' => false]);
         if ($res->getStatusCode() == 200 && $res->getBody() != '') {
-            return $this->storeImg($res->getBody());
+            $path = $this->storeImg($res->getBody());
+            if($option){
+                return $res->getBody();
+            }
+            return $path;
         }
         return false;
     }

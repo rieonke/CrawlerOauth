@@ -91,6 +91,12 @@ class BaseAuth
         return $this->get();
     }
 
+
+    public function qrcode($option = false)
+    {
+        return $this->getQrcodeImg($option);
+    }
+
     /**
      * @param $qrcode
      * @return string
@@ -100,5 +106,10 @@ class BaseAuth
         $path = $this->qrcodeImagePath . self::IMG_NAME;
         file_put_contents($path, $qrcode);
         return $path;
+    }
+
+    protected function getQrcodeImg($option)
+    {
+        return false;
     }
 }

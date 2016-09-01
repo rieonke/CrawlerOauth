@@ -43,7 +43,6 @@ class Wechat extends BaseAuth
     /**
      * Wechat constructor.
      * @param $requestUrl
-     * @param $callbackUrl
      * @param $qrcodeImagePath
      */
     public function __construct($requestUrl, $qrcodeImagePath)
@@ -93,9 +92,10 @@ class Wechat extends BaseAuth
     }
 
     /**
-     * @return bool|string
+     * @param bool $option
+     * @return bool|\Psr\Http\Message\StreamInterface|string
      */
-    private function getQrcodeImg()
+    protected function getQrcodeImg($option = false)
     {
         if (preg_match(self::REG_QRCODE_IMG_PATH, $this->targetPageContent, $image)) {
             $client = new Client();
@@ -103,8 +103,12 @@ class Wechat extends BaseAuth
                 self::URL_WECHAT_IMG_SERVER . $image[0],
                 ['verify' => false, 'allow_redirects' => false]
             );
-            if ($res->getStatusCode() == '200') {
-                return $this->storeImg($res->getBody());
+            if ($res->getStatusCode() == 200) {
+                $path = $this->storeImg($res->getBody());
+                if($option){
+                    return $res->getBody();
+                }
+                return $path;
             }
             return false;
         }
