@@ -14,22 +14,22 @@ an php oauth lib for web crawler
 
 ## 正确食用方法
 
-1. 安装这个包
+- 安装这个包
 ```
 composer require rieon/crawler-oauth
 ```
-2. 引入并实例化(以微博为例)
+- 引入并实例化(以微博为例)
 ```
 use Rieon\CrawlerOauth\Weibo;
 
 $weibo = new Weibo('Oauth请求地址', '二维码保存目录');
 
 ```
-3. 得到Cookies
+- 得到Cookies
 ```
 $weibo->cookies()
 ```
-4. 额外:
+- 额外:
 
 - 获得二维码路径
 ```
@@ -39,7 +39,7 @@ $weibo->qrcode();
 ```
 $weibo->qrcode(true);
 ```
-5. 参数说明
+- 参数说明
 > Oauth请求地址: Oauth客户端的地址，重定向到Oauth服务器之前的那个地址
 >
 > 二维码保存目录即为Oauth登陆时扫描二维码的保存目录，相对绝对
