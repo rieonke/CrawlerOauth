@@ -13,6 +13,6 @@
         "psr-4": { "Rieon\\CrawlerOauth\\": "src/CrawlerOauth" }
     },
     "require": {
-        "guzzlehttp/guzzle": "^6.2"
+        "rieon/curl": "^0.0.1"
     }
 }

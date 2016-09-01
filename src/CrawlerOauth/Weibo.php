@@ -9,7 +9,7 @@
 namespace Rieon\CrawlerOauth;
 
 
-use GuzzleHttp\Client;
+use Rieon\Common\Curl\Curl;
 
 class Weibo extends BaseAuth
 {
@@ -47,11 +47,11 @@ class Weibo extends BaseAuth
     }
 
     /**
-     * @return bool|string
+     * @return array|bool
      */
     protected function get()
     {
-        if($this->getQrcodeImg()){
+        if ($this->getQrcodeImg()) {
             $url = $this->getSuccessUrl();
             return $this->getCookies($url);
         }
@@ -88,16 +88,13 @@ class Weibo extends BaseAuth
      */
     private function init()
     {
-        $client = new Client();
-        $config = [
-            'verify' => false,
-            'allow_redirects' => false,
-            'query' => $this->getRequestParams()
-        ];
-        $res = $client->get(self::URL_WEIBO_OAUTH_SERVER, $config);
-        $r = json_decode($res->getBody(), true);
+        $client = new Curl();
+        $config = $this->getRequestParams();
+        $res = $client->get(self::URL_WEIBO_OAUTH_SERVER,$config);
+        $r = json_decode($res, true);
         $this->qrcodeUrl = $r['url'];
         $this->vcode = $r['vcode'];
+        $client->close();
     }
 
     /**
@@ -106,12 +103,13 @@ class Weibo extends BaseAuth
      */
     protected function getQrcodeImg($option = false)
     {
-        $client = new Client();
-        $res = $client->get($this->qrcodeUrl,['verify' => false, 'allow_redirects' => false]);
-        if ($res->getStatusCode() == 200 && $res->getBody() != '') {
-            $path = $this->storeImg($res->getBody());
-            if($option){
-                return $res->getBody();
+        $client = new Curl();
+        $res = $client->get($this->qrcodeUrl);
+        $client->close();
+        if ($res != '') {
+            $path = $this->storeImg($res);
+            if ($option) {
+                return $res;
             }
             return $path;
         }
@@ -127,30 +125,25 @@ class Weibo extends BaseAuth
             'vcode' => $this->vcode,
             '__rnd' => time() . "000"
         ];
-        $config = [
-            'verify' => false,
-            'allow_redirects' => false,
-            'query' => $params
-        ];
-        $client = new Client();
+        $client = new Curl();
         do {
-            $res = $client->get(self::URL_CHECK, $config)->getBody();
+            $res = $client->get(self::URL_CHECK, $params);
             $r = json_decode($res, true);
         } while ($r['status'] != 3);
+        $client->close();
         return $r['url'];
     }
 
     /**
      * @param $url
-     * @return string
+     * @return array
      */
     private function getCookies($url)
     {
-        $client = new Client();
-        return $client->get($url,
-            [
-                'verify' => false,
-                'allow_redirects' => false
-            ])->getHeaderLine("Set-Cookie");
+        $client = new Curl();
+        $client->get($url);
+        $cookies = $client->getResponseCookies();
+        $client->close();
+        return $cookies;
     }
 }

@@ -8,7 +8,7 @@
 
 namespace Rieon\CrawlerOauth;
 
-use GuzzleHttp\Client;
+use Rieon\Common\Curl\Curl;
 
 class Wechat extends BaseAuth
 {
@@ -17,7 +17,7 @@ class Wechat extends BaseAuth
     /**
      * url for wechat checking login state
      */
-    const URL_CHECK = 'https://long.open.weixin.qq.com/connect/l/qrconnect?';
+    const URL_CHECK = 'https://long.open.weixin.qq.com/connect/l/qrconnect';
     /**
      * wechat open server the first time client redirect to
      */
@@ -53,7 +53,7 @@ class Wechat extends BaseAuth
     }
 
     /**
-     * @return bool|string
+     * @return array|bool
      */
     protected function get()
     {
@@ -72,20 +72,17 @@ class Wechat extends BaseAuth
     {
         if ($this->uuid) {
             $code = '';
-            $client = new Client();
+            $client = new Curl();
             $config = [
-                'verify' => false,
-                'allow_redirects' => false,
-                'query' => [
                     'uuid' => $this->uuid,
                     '_' => time()
-                ]
             ];
-            while (preg_match(self::REG_CODE, $client->get(self::URL_CHECK, $config)->getBody(), $code)) {
+            while (preg_match(self::REG_CODE, $client->get(self::URL_CHECK, $config), $code)) {
                 if ($code[0] != '') {
                     break;
                 }
             }
+            $client->close();
             return $code[0];
         }
         return false;
@@ -98,15 +95,12 @@ class Wechat extends BaseAuth
     protected function getQrcodeImg($option = false)
     {
         if (preg_match(self::REG_QRCODE_IMG_PATH, $this->targetPageContent, $image)) {
-            $client = new Client();
-            $res = $client->get(
-                self::URL_WECHAT_IMG_SERVER . $image[0],
-                ['verify' => false, 'allow_redirects' => false]
-            );
-            if ($res->getStatusCode() == 200) {
-                $path = $this->storeImg($res->getBody());
-                if($option){
-                    return $res->getBody();
+            $client = new Curl();
+            $res = $client->get(self::URL_WECHAT_IMG_SERVER . $image[0]);
+            if ($res != null) {
+                $path = $this->storeImg($res);
+                if ($option) {
+                    return $res;
                 }
                 return $path;
             }
@@ -140,19 +134,14 @@ class Wechat extends BaseAuth
     /**
      * @param $code
      * @param $state
-     * @return string
+     * @return array
      */
     private function getCookies($code, $state)
     {
-        $client = new Client();
-        return $client->get($this->callbackUrl,
-            [
-                'verify' => false,
-                'allow_redirects' => false,
-                'query' => [
-                    'code' => $code,
-                    'state' => $state
-                ]
-            ])->getHeaderLine("Set-Cookie");
+        $client = new Curl();
+        $client->get($this->callbackUrl, ['code' => $code, 'state' => $state]);
+        $cookies = $client->getResponseCookies();
+        $client->close();
+        return $cookies;
     }
 }

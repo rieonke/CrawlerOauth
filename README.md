@@ -1,6 +1,6 @@
 # CrawlerOauth
 
-一个PHP爬虫Oauth认证库
+an php oauth lib for web crawler
 
 ## 用途
 

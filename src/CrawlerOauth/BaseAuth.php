@@ -8,7 +8,8 @@
 
 namespace Rieon\CrawlerOauth;
 
-use GuzzleHttp\Client;
+use Rieon\Common\Curl\Curl;
+
 class BaseAuth
 {
     /*
@@ -32,16 +33,17 @@ class BaseAuth
      */
     protected $targetPageContent;
 
+    protected $originCookies;
+
     /**
      * the file name for the qrcode
      */
     const IMG_NAME = "/qrcode.jpg";
 
-    
+
     /**
      * BaseAuth constructor.
      * @param $requestUrl
-     * @param $callbackUrl
      * @param $qrcodeImagePath
      */
     protected function __construct($requestUrl,$qrcodeImagePath)
@@ -57,9 +59,10 @@ class BaseAuth
      * @return string
      */
     private function getTargetUrl(){
-        $client = new Client();
-        $res = $client->get($this->requestUrl,['verify' => false,'allow_redirects' => false]);
-        $url = $res->getHeaderLine("Location");
+        $client = new Curl();
+        $client->get($this->requestUrl);
+        $url = $client->responseHeaders['Location'];
+        $client->close();
         return $url;
     }
 
@@ -67,10 +70,10 @@ class BaseAuth
      * @return \Psr\Http\Message\StreamInterface
      */
     private function getTargetPageContent(){
-        $client = new Client();
-        $res = $client->get($this->targetUrl, ['verify' => false,'allow_redirects' => false]);
-        $content = $res->getBody();
-        return $content;
+        $client = new Curl();
+        $res = $client->get($this->targetUrl);
+        $client->close();
+        return $res;
     }
 
     /**
@@ -84,7 +87,7 @@ class BaseAuth
     }
 
     /**
-     * @return bool|string
+     * @return mixed
      */
     public function cookies()
     {
