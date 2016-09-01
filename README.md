@@ -8,9 +8,9 @@ an php oauth lib for web crawler
 
 ## 支持的Oauth服务提供商
 
-> 微信 (new Rieon\CrawlerOauth\Weixin)
-> 微博 (new Rieon\CrawlerOauth\Weibo)
-> 更多正在路上了~~~
+- 微信 (new Rieon\CrawlerOauth\Weixin)
+- 微博 (new Rieon\CrawlerOauth\Weibo)
+- 更多正在路上了~~~
 
 ## 正确食用方法
 
@@ -20,7 +20,7 @@ composer require rieon/crawler-oauth
 ```
 2. 引入并实例化(以微博为例)
 ```
-use Rieon\CrawlerOauth\Weibo; 
+use Rieon\CrawlerOauth\Weibo;
 
 $weibo = new Weibo('Oauth请求地址', '二维码保存目录');
 
@@ -30,18 +30,19 @@ $weibo = new Weibo('Oauth请求地址', '二维码保存目录');
 $weibo->cookies()
 ```
 4. 额外:
-> 获得二维码路径
+
+- 获得二维码路径
 ```
 $weibo->qrcode();
 ```
-> 获得二维码图像
-
+- 获得二维码图像
 ```
 $weibo->qrcode(true);
 ```
 5. 参数说明
 > Oauth请求地址: Oauth客户端的地址，重定向到Oauth服务器之前的那个地址
-> 二维码保存目录即为Oauth登陆时扫描二维码的保存目录，相对绝对皆可
+>
+> 二维码保存目录即为Oauth登陆时扫描二维码的保存目录，相对绝对
 
 ## 例子
 在 `example`目录中有一个index.php
@@ -50,9 +51,9 @@ $weibo->qrcode(true);
 ```
 
 ## 方法
-1. cookies() 获得cookies
-2. qrcode() 获得二维码路径
-3. qrcode(true) 获得二维码图像
+- cookies() 获得cookies
+- qrcode() 获得二维码路径
+- qrcode(true) 获得二维码图像
 
 ## License
 MIT
