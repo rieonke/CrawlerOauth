@@ -29,7 +29,7 @@ $weibo = new Weibo('Oauth请求地址', '二维码保存目录');
 ```
 $weibo->cookies()
 ```
-- 额外:
+## 额外:
 
 - 获得二维码路径
 ```
@@ -40,6 +40,7 @@ $weibo->qrcode();
 $weibo->qrcode(true);
 ```
 - 参数说明
+
 > Oauth请求地址: Oauth客户端的地址，重定向到Oauth服务器之前的那个地址
 >
 > 二维码保存目录即为Oauth登陆时扫描二维码的保存目录，相对绝对
